@@ -2,7 +2,7 @@
 #Dockerfile to build an image which supports testing our Qxf2 Page Object Model.
 FROM ubuntu
 MAINTAINER Qxf2 Services
-
+WORKDIR /usr/app
 # Essential tools and xvfb
 RUN apt-get update && apt-get install -y \
     software-properties-common \
@@ -54,6 +54,5 @@ RUN apt-get update && \
 # Setup JAVA_HOME -- useful for docker commandline
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
-VOLUME /tmp
-COPY target/smartshopper-0.0.1.jar smartshopper-0.0.1.jar
+COPY ./target/smartshopper-0.0.1.jar /usr/app/.
 ENTRYPOINT ["java","-jar","/smartshopper-0.0.1.jar"]
