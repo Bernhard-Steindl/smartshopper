@@ -31,6 +31,7 @@ public class SmartShoppingService {
         Map<Double, String> results = new TreeMap<>();
         //System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
         System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver");
+        //System.setProperty("webdriver.chrome.driver", "/Users/ravi/development/chromedriver");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized"); // open Browser in maximized mode
         options.addArguments("disable-infobars"); // disabling infobars
