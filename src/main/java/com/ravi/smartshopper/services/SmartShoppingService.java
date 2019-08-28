@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,18 @@ public class SmartShoppingService {
     public Map<Double, String> doShopping(String itemToBuy) {
 
         Map<Double, String> results = new TreeMap<>();
-        //System.setProperty("webdriver.gecko.driver", "/Users/ravi/development/geckodriver");
-        System.setProperty("webdriver.chrome.driver", "/Users/ravi/development/chromedriver");
-        WebDriver driver = new ChromeDriver();
+        //System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
+        System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver");
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("start-maximized"); // open Browser in maximized mode
+        options.addArguments("disable-infobars"); // disabling infobars
+        options.addArguments("--disable-extensions"); // disabling extensions
+        options.addArguments("--disable-gpu"); // applicable to windows os only
+        options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
+        options.addArguments("--no-sandbox"); // Bypass OS security model
+        options.addArguments("--headless");
+
+        WebDriver driver = new ChromeDriver(options);
         driver.get("https://google.com.au");
         driver.manage().window().maximize();
         WebElement searchBox = driver.findElement(By.name("q"));
