@@ -1,5 +1,5 @@
-FROM openjdk:8-jdk-alpine
+FROM dockerfile/java:oracle-java8
 VOLUME /tmp
-ARG JAR_FILE
-COPY ${JAR_FILE} smartshopper-0.0.1.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/smartshopper-0.0.1.jar"]
+ADD target/core-0.1.0-RELEASE.jar target/smartshopper-0.0.1.jar
+RUN bash -c 'touch target/smartshopper-0.0.1.jar'
+ENTRYPOINT ["java","-jar","target/smartshopper-0.0.1.jar"]
