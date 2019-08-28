@@ -27,6 +27,7 @@ public class SmartShoppingService {
 
     public Map<Double, String> doShopping(String itemToBuy) {
 
+        logger.debug("Shopping:{}", itemToBuy);
         Map<Double, String> results = new TreeMap<>();
         //System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
         System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver");
