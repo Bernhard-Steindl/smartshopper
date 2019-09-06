@@ -3,7 +3,6 @@
 FROM ubuntu
 MAINTAINER Qxf2 Services
 VOLUME /tmp
-WORKDIR /tmp
 # Essential tools and xvfb
 RUN apt-get update && apt-get install -y \
     software-properties-common \
@@ -42,5 +41,6 @@ RUN apt-get update && \
 # Setup JAVA_HOME -- useful for docker commandline
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
-COPY ./target/smartshopper-0.0.1.jar smartshopper-0.0.1.jar
-ENTRYPOINT ["java","-jar","smartshopper-0.0.1.jar"]
+WORKDIR /tmp/ravi
+COPY targer/smartshopper*.jar /smartshopper.jar
+ENTRYPOINT ["java","-jar","/smartshopper.jar"]
