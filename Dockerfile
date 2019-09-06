@@ -42,5 +42,5 @@ RUN apt-get update && \
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
 WORKDIR /tmp/ravi
-COPY target/smartshopper*.jar /smartshopper.jar
-ENTRYPOINT ["java","-jar","/smartshopper.jar"]
+COPY target/smartshopper*.jar /tmp/ravi/smartshopper.jar
+ENTRYPOINT ["java","-jar","/tmp/ravi/smartshopper.jar"]
