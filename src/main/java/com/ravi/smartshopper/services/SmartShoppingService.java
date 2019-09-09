@@ -9,29 +9,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class SmartShoppingService {
 
     Logger logger = LoggerFactory.getLogger(SmartShoppingService.class);
 
-    public static void main(String[] args) {
-        SmartShoppingService smartShoppingService = new SmartShoppingService();
-
-        Map<Double, String> results = smartShoppingService.doShopping("Meswak tooth paste");
-    }
-
-    public Map<Double, String> doShopping(String itemToBuy) {
+    public Map<Double, String> doShopping(String itemToBuy) throws InterruptedException {
 
         logger.debug("Shopping:{}", itemToBuy);
         Map<Double, String> results = new TreeMap<>();
-        //System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
+        System.setProperty("webdriver.gecko.driver", "/opt/selenium/geckodriver");
         System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver");
-        //System.setProperty("webdriver.chrome.driver", "/Users/ravi/development/chromedriver");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized"); // open Browser in maximized mode
         options.addArguments("disable-infobars"); // disabling infobars
@@ -42,6 +36,7 @@ public class SmartShoppingService {
         options.addArguments("--headless");
 
         WebDriver driver = new ChromeDriver(options);
+        //TODO: Open country specific google website
         driver.get("https://google.com.au");
         driver.manage().window().maximize();
         WebElement searchBox = driver.findElement(By.name("q"));
@@ -49,25 +44,18 @@ public class SmartShoppingService {
         WebElement searchButton = driver.findElement(By.name("btnK"));
         searchButton.submit();
         driver.findElement(By.linkText("Shopping")).click();
-        try {
-            logger.trace("Sleeping for 1 second.");
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            logger.error("Exception while sleeping: {}", e.getMessage());
-        }
-        List<WebElement> priceTags = driver.findElements(By.className("h1Wfwb"));
-        List<WebElement> hyperLinks = driver.findElements(By.className("AGVhpb"));
+        logger.trace("Sleeping for 1 second.");
+        Thread.sleep(1000);
+        List<WebElement> priceTags = driver.findElements(By.className("sh-dlr__list-result"));
+        List<WebElement> hyperLinks = driver.findElements(By.className("sh-dlr__content"));
         int i = 0;
         for (WebElement priceTag : priceTags) {
             try {
-                String price = priceTag.getText().replace("$", "");
-                List<String> tokensToClean = Arrays.asList("+", "(");
-                for (String token : tokensToClean) {
-                    if (price.contains(token)) {
-                        price = getSubStringAfterCleaning(price, "+");
-                    }
-                }
-                results.put(Double.valueOf(price), hyperLinks.get(i).getAttribute("href"));
+                String price = getMatchingText("(\\d+\\.\\d{1,2})", priceTag.getText(), 0);
+                String url = hyperLinks.get(i).findElement(By.tagName("a")).getAttribute("href");
+                //NOSONAR String url = getMatchingText("(href=\\\"(.*?)\\\")", urlInput, 2);
+                //NOSONAR logger.debug("url:" + url);
+                results.put(Double.valueOf(price), url);
                 i++;
             } catch (Exception e) {
                 logger.error("Exception:{}", e.getMessage());
@@ -78,9 +66,13 @@ public class SmartShoppingService {
         return results;
     }
 
-    private String getSubStringAfterCleaning(String price, String s) {
+    private String getMatchingText(String regex, String input, int groupToCapture) {
 
-        price = price.substring(0, price.indexOf(s)).trim();
-        return price;
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return matcher.group(groupToCapture);
+        }
+        return "";
     }
 }
